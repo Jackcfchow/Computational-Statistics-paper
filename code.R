@@ -1,5 +1,8 @@
 rm(list = ls())
 set.seed(1)
+#setwd("Set Your Own Directory")
+#setwd("Compstat_Chow")
+
 
 library(MASS)
 library(grf)
@@ -96,12 +99,12 @@ dataset_sharp_fuzzy<- gen_treatment_outcome_sharp_fuzzy(dataset)
 X <-as.matrix (cbind(dataset_sharp_fuzzy[,2:12], dataset_sharp_fuzzy$householdsize, dataset_sharp_fuzzy$ageresponder, dataset_sharp_fuzzy$schooling_resp)  )
 
 rdd_w_sharp <- rdd_data(x=dataset_sharp_fuzzy$expenditures, y=dataset_sharp_fuzzy$W ,z=ifelse(dataset_sharp_fuzzy$expenditures<200,1,0), covar =  X,   data=dataset_sharp_fuzzy, cutpoint=200)
-png(filename="fig/rddgraph_sharp.png")
+png(filename="rddgraph_sharp.png")
 rddgraph_sharp <- plot(rdd_w_sharp, nbins=N/10,xlab="Expenditure", ylab = "Treatment",main = "Figure 1a. Deterministic treatment assignment" , ylim=c(0,1))
 dev.off()
 
 rdd_w_fuzzy <- rdd_data(x=dataset_sharp_fuzzy$expenditures, y=dataset_sharp_fuzzy$W_fuzzy ,z=ifelse(dataset_sharp_fuzzy$expenditures<200,1,0), covar =  X,   data=dataset_sharp_fuzzy, cutpoint=200)
-png(filename="fig/rddgraph_fuzzy.png")
+png(filename="rddgraph_fuzzy.png")
 rddgraph_fuzzy <- plot(rdd_w_fuzzy, nbins=N/10,xlab="Expenditure", ylab = "Treatment",main = "Figure 1b. Probabilistic treatment assignment" , ylim=c(0,1))
 dev.off()
 
@@ -128,7 +131,7 @@ RDD_sharp_fuzzy <- function(dataset_sim) {
   Bias_ATE_RDD_sharp = ATE_RDD_sharp - True_ATE
   Bias_ATE_RDD_fuzzy = ATE_RDD_fuzzy - True_ATE
   
-  return (cbind( True_ATE= True_ATE, ATE_RDD_sharp,Bias_ATE_RDD_sharp, RMSE_sharp,ATE_RDD_fuzzy,Bias_ATE_RDD_fuzzy,RMSE_fuzzy))
+  return (cbind( True_ATE= True_ATE, ATE_RDD_sharp,Bias_ATE_RDD_sharp,ATE_RDD_fuzzy,Bias_ATE_RDD_fuzzy))
 }
 
 
@@ -342,7 +345,7 @@ dataset_heter<- gen_treatment_outcome_heter(dataset)
 X <-as.matrix (cbind(dataset_heter[,2:12], dataset_heter$householdsize, dataset_heter$ageresponder, dataset_heter$schooling_resp)  )
 
 rdd <- rdd_data(x=dataset_heter$expenditures, y=dataset_heter$Y ,z=ifelse(dataset_heter$expenditures<200,1,0), covar =  X,   data=dataset_heter, cutpoint=200)
-png(filename="fig/rddgraph1.png")
+png(filename="rddgraph1.png")
 rddgraph1 <- plot(rdd, nbins=N/20,xlab="Expenditure", ylab = "Church Attendence",main = "Figure 2. Graphical presentation of RDD", ylim=c(12,40))
 dev.off()
 
@@ -351,20 +354,20 @@ dev.off()
 
 
 reg_para_order1 <- rdd_reg_lm(rdd_object=rdd,order=1)
-png(filename="fig/rddgraph_order1.png")
+png(filename="rddgraph_order1.png")
 rddgraph_order1 <- plot(reg_para_order1,xlab="Expenditure", ylab = "Church Attendence",main = "Figure 3a. RDD estimation with a 1st order polynomial", ylim=c(12,35)) 
 dev.off()
 
 # 
 reg_para_order2 <- rdd_reg_lm(rdd_object=rdd,order=2)
 # print(reg_para_order2)
-png(filename="fig/rddgraph_order2.png")
+png(filename="rddgraph_order2.png")
 rddgraph_order2 <- plot(reg_para_order2,xlab="Expenditure", ylab = "Church Attendence",main = "Figure 3b. RDD estimation with a 2nd order polynomial", ylim=c(12,35))
 dev.off()
 
 reg_para_order3 <- rdd_reg_lm(rdd_object=rdd,order=3)
 # print(reg_para_order2)
-png(filename="fig/rddgraph_order3.png")
+png(filename="rddgraph_order3.png")
 rddgraph_order3 <- plot(reg_para_order3,xlab="Expenditure", ylab = "Church Attendence",main = "Figure 3c. RDD estimation with a 3rd order polynomial", ylim=c(12,35))
 dev.off()
 
@@ -647,7 +650,7 @@ for (n in c(500,1000,5000,10000)) {
     result_omit<- rbind(result_omit, result_omit_temp)
   }
   
-  write.csv(result_omit, file=paste("result_omit",n ,"sample.csv" , sep=""))
+  write.csv(result_omit, file=paste("result_omit_",n ,"sample.csv" , sep=""))
   
 }
 
